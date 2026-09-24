@@ -1,0 +1,31 @@
+{
+  "start-scene": "c6231880-a5f8-46a8-ba09-6a2c97cf136d",
+  "group-list": [
+    "default",
+    "main_role",
+    "main_bg",
+    "main_ground",
+    "drop_item",
+    "knife",
+    "monster",
+    "mbullet",
+    "pbullet",
+    "eitem",
+    "erole"
+  ],
+  "collision-matrix": [
+    [false,true,null,null,null,null,null,null,null,null,false],
+    [true,false,null,null,null,null,null,false,null,false],
+    [false,false,false],
+    [false,false,false,false],
+    [false,false,false,false,false,true],
+    [false,false,false,false,true,false],
+    [false,false,false,false,false,false,false,null,true],
+    [false,false,false,false,false,false,false,false,false,null,true],
+    [false,false,false,false,false,false,true,false,false],
+    [false,false,false,false,false,false,false,false,false,false,true],
+    [false,false,false,false,false,false,false,true,false,true,false]
+  ],
+  "migrate-history": ["cloud-function"],
+  "last-module-event-record-time": 1697684482713
+}
