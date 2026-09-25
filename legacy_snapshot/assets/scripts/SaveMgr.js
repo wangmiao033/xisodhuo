@@ -43,6 +43,7 @@ var a,
     i =
         (i(M, (a = e.default)),
         (M.prototype.savePlayerData = function () {
+            if (!r.default.enable_cloud_save) return;
             var t = new C();
             (t.comm_data = s.default.getInstance()),
                 (t.task_data = b.default.getInstance()),
@@ -279,10 +280,11 @@ var a,
                     this.readData(),
                     this._call_back && this._call_back(),
                     h.default.emit(c.GameEvent.get_server_data_done),
-                    void this.savePlayerData()
+                    void (r.default.enable_cloud_save && this.savePlayerData())
                 );
-            this.readData(),
-                (t = {uid: l.gm.data.uid, token: l.gm.data.token, op_type: "player_data", open_id: l.gm.data.open_id}),
+            if ((this.readData(), !r.default.enable_cloud_save))
+                return this._call_back && this._call_back(), void h.default.emit(c.GameEvent.get_server_data_done);
+            (t = {uid: l.gm.data.uid, token: l.gm.data.token, op_type: "player_data", open_id: l.gm.data.open_id}),
                 d.Utils.http_request(
                     this.get_player_data_on_rsp,
                     this,
