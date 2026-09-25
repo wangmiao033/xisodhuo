@@ -115,36 +115,69 @@ var l = t("GameMgr"),
             return u;
         }),
         (u.http_request = function(e, o, n, t) {
-            var i = new XMLHttpRequest();
+            var i = new XMLHttpRequest(),
+                a = !1,
+                r = function(t) {
+                    a || ((a = !0), e && e.apply(o, [t]));
+                };
             (i.withCredentials = !1),
-            (i.onreadystatechange = function() {
-                var t;
-                4 == i.readyState && 200 <= i.status && i.status < 400 ?
-                    (console.log(i.responseText),
-                        (t = JSON.parse(i.responseText)),
-                        e && e.apply(o, [t]),
-                        console.log(i.responseText)) :
-                    4 == i.readyState &&
-                    (i.status < 100 || 400 <= i.status) &&
-                    (cc.error("请求失败" + n), l.gm.data.event_emitter.emit("connect_fail"));
-            }),
-            console.log("request: " + n),
+                (i.timeout = 1e4),
+                (i.onreadystatechange = function() {
+                    var t;
+                    if (4 == i.readyState)
+                        if (200 <= i.status && i.status < 400)
+                            try {
+                                (t = JSON.parse(i.responseText)), r(t), console.log(i.responseText);
+                            } catch (e) {
+                                cc.error("响应解析失败 " + n, e), r({ResultCode: -1, msg: "invalid_response"});
+                            }
+                        else
+                            cc.error("请求失败" + n),
+                                l.gm.data &&
+                                    l.gm.data.event_emitter &&
+                                    l.gm.data.event_emitter.emit("connect_fail"),
+                                r({ResultCode: -1, msg: "network_error"});
+                }),
+                (i.onerror = function() {
+                    r({ResultCode: -1, msg: "network_error"});
+                }),
+                (i.ontimeout = function() {
+                    cc.error("请求超时" + n), r({ResultCode: -1, msg: "timeout"});
+                }),
+                console.log("request: " + n),
                 i.open("POST", n, !0),
                 i.setRequestHeader("Content-Type", "application/json; charset=UTF-8"),
                 i.send(JSON.stringify(t));
         }),
         (u.server_http_request = function(e, o, n) {
             for (var t = [], i = 3; i < arguments.length; i++) t[i - 3] = arguments[i];
-            var a = new XMLHttpRequest();
-            a.onreadystatechange = function() {
-                if (4 == a.readyState && 200 <= a.status && a.status < 400) {
-                    var t = JSON.parse(a.responseText);
-                    return e && e.apply(o, [t]), void console.log(a.responseText);
-                }
-                4 == a.readyState && (a.status < 100 || 400 <= a.status) && console.error("请求失败" + n);
-            };
-            var r = (r = cc.js).formatStr.apply(r, s([n], t));
-            console.log("request: " + r), a.open("GET", r, !0), a.send();
+            var a = new XMLHttpRequest(),
+                r = !1,
+                c = function(t) {
+                    r || ((r = !0), e && e.apply(o, [t]));
+                },
+                n = (n = cc.js).formatStr.apply(n, s([n], t));
+            (a.timeout = 1e4),
+                (a.onreadystatechange = function() {
+                    var t;
+                    if (4 == a.readyState)
+                        if (200 <= a.status && a.status < 400)
+                            try {
+                                (t = JSON.parse(a.responseText)), c(t), console.log(a.responseText);
+                            } catch (e) {
+                                cc.error("响应解析失败 " + n, e), c({ResultCode: -1, msg: "invalid_response"});
+                            }
+                        else console.error("请求失败" + n), c({ResultCode: -1, msg: "network_error"});
+                }),
+                (a.onerror = function() {
+                    c({ResultCode: -1, msg: "network_error"});
+                }),
+                (a.ontimeout = function() {
+                    console.error("请求超时" + n), c({ResultCode: -1, msg: "timeout"});
+                }),
+                console.log("request: " + n),
+                a.open("GET", n, !0),
+                a.send();
         }),
         (u.server_http_request_post = function(e, o, t) {
             for (var n, i = [], a = 3; a < arguments.length; a++) i[a - 3] = arguments[a];
