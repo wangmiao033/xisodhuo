@@ -63,17 +63,17 @@ var r,
                 m.default.setEffectVolume(1 == u.gm.localData.effectOn ? 0.5 : 0),
                 (this.targetCount += 1),
                 y.default.getNetTime(function (t) {
-                    t &&
-                        (0 == t.ResultCode
-                            ? ((e.curCount += 1),
-                              d.default.getTimeNode().schedule(
-                                  function (t) {
-                                      y.default.updateTime(t);
-                                  },
-                                  0,
-                                  cc.macro.REPEAT_FOREVER
-                              ))
-                            : cc.error(t));
+                    0 == (t && t.ResultCode)
+                        ? d.default.getTimeNode().schedule(
+                              function (t) {
+                                  y.default.updateTime(t);
+                              },
+                              0,
+                              cc.macro.REPEAT_FOREVER
+                          )
+                        : cc.warn("getNetTime failed; continue with local time", t),
+                        (e.curCount += 1),
+                        e.onLoadDataCb();
                 });
         }),
         (b.prototype.start = function () {}),
@@ -82,19 +82,24 @@ var r,
         }),
         (b.prototype._loadConfig = function () {
             var e = this;
-            f.default.getInstance().getResAsyn(p.BundleName.COMMON, "json/DBconfig", cc.JsonAsset, function (t) {
-                u.gm.config.initConfig(t.json),
-                    t.decRef(),
-                    e._loadMapInsideData(),
-                    e._loadMapJson(),
-                    e._loadNpcPathJson(),
-                    e._loadMainRole(),
-                    e._loadMainUI(),
-                    e._loadBaseUI(),
-                    e._loadNpc(),
-                    e._loadMapObject(),
-                    e._loadFirstLogin();
-            });
+            (this.targetCount += 1),
+                f.default.getInstance().getResAsyn(p.BundleName.COMMON, "json/DBconfig", cc.JsonAsset, function (t) {
+                    (e.curCount += 1),
+                        (e._registeringLoads = !0),
+                        u.gm.config.initConfig(t.json),
+                        t.decRef(),
+                        e._loadMapInsideData(),
+                        e._loadMapJson(),
+                        e._loadNpcPathJson(),
+                        e._loadMainRole(),
+                        e._loadMainUI(),
+                        e._loadBaseUI(),
+                        e._loadNpc(),
+                        e._loadMapObject(),
+                        e._loadFirstLogin(),
+                        (e._registeringLoads = !1),
+                        e.onLoadDataCb();
+                });
         }),
         (b.prototype._loadMapInsideData = function () {
             var e = this;
@@ -121,18 +126,21 @@ var r,
         }),
         (b.prototype.onLoadDataCb = function () {
             var t = this;
-            (this.lbl_desc.string = "马上到家，可以吃到奶奶做的饭了..." + this.curCount + "/" + this.targetCount),
-                this.targetCount &&
-                    this.targetCount == this.curCount &&
-                    ((u.gm.mapData = new h.default()),
-                    u.gm.mapData.addOriginalObjectDatas(_.default.getInstance().mapJsonData),
-                    u.gm.mapData.initMapObjectData(),
-                    u.gm.localData.guide
-                        ? u.gm.ui.showModule(u.gm.const.MainUI)
-                        : (u.gm.ui.showTopBlock(!1, 0),
-                          u.gm.ui.showModule(u.gm.const.RegisterUI, function () {
-                              t.closeMe();
-                          })));
+            if (
+                ((this.lbl_desc.string = "马上到家，可以吃到奶奶做的饭了..." + this.curCount + "/" + this.targetCount),
+                this._registeringLoads || this._finished || !this.targetCount || this.targetCount != this.curCount)
+            )
+                return;
+            (this._finished = !0),
+                (u.gm.mapData = new h.default()),
+                u.gm.mapData.addOriginalObjectDatas(_.default.getInstance().mapJsonData),
+                u.gm.mapData.initMapObjectData(),
+                u.gm.localData.guide
+                    ? u.gm.ui.showModule(u.gm.const.MainUI)
+                    : (u.gm.ui.showTopBlock(!1, 0),
+                      u.gm.ui.showModule(u.gm.const.RegisterUI, function () {
+                          t.closeMe();
+                      }));
         }),
         (b.prototype._loadNpc = function () {
             var t = this;
@@ -250,6 +258,6 @@ var r,
         a([t], b));
 function b() {
     var t = (null !== r && r.apply(this, arguments)) || this;
-    return (t.lbl_desc = null), (t.nod_car = null), (t.spr_progress = null), (t.targetCount = 0), (t.curCount = 0), t;
+    return (t.lbl_desc = null), (t.nod_car = null), (t.spr_progress = null), (t.targetCount = 0), (t.curCount = 0), (t._registeringLoads = !1), (t._finished = !1), t;
 }
 o.default = t;
