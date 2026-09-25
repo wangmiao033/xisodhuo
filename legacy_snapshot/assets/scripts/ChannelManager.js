@@ -8,7 +8,7 @@ var i,
     r = t("QQMiniGame"),
     s = t("TTMiniGame"),
     c = t("WXMiniGame"),
-    l = t("DWMiniGame "),
+    l = t("DWMiniGame"),
     p = t("GameMgr"),
     u = t("VIVOMiniGame"),
     d = t("OPPOMiniGame"),
@@ -20,7 +20,8 @@ var i,
     g = t("Const"),
     y = t("DataManager"),
     v = t("AppConfig"),
-    b = t("EventManager");
+    b = t("EventManager"),
+    w = t("StorageUtil");
 
 function I() {
     (this._is_fenghao = !1),
@@ -725,25 +726,45 @@ Object.defineProperty(I, "instance", {
                     this.app_login(p.gm.data.device_id)));
     }),
     (I.prototype.report_login = function(t, e) {
-        // if (this.check_is_app())
-        //     return (
-        //         (p.gm.data.report_login_value = 10),
-        //         (this.lock_call_back = e),
-        //         void (this.get_channel_name() == I.TAP_TAP_GAME
-        //             ? (this.login_call_back(), (p.gm.data.report_login_value = 3))
-        //             : ((p.gm.data.report_login_value = 6), this.login_call_back()))
-        //     );
         var o;
+        if (!v.default.enable_cloud_save) {
+            return (
+                (o = w.default.get("fashion_town_guest_id", !1)),
+                o ||
+                    ((o =
+                        "guest_" +
+                        Date.now().toString(36) +
+                        "_" +
+                        Math.floor(1e9 * Math.random()).toString(36)),
+                    w.default.set("fashion_town_guest_id", o, !1)),
+                this.login_on_rsp({
+                    ResultCode: 0,
+                    msg: "local_guest",
+                    data: {
+                        uid: o,
+                        open_id: o,
+                        nickname: "",
+                        coins: 0,
+                        data_last_update_time: 0,
+                        if_block: 0,
+                        if_bind: 0,
+                        bind_username: "",
+                        bind_uid: 0,
+                        bind_channel: 0,
+                        token: "local"
+                    }
+                }),
+                void (e && e())
+            );
+        }
         this.get_is_login() &&
             ((p.gm.data.report_login_value = 7),
-                (o = this.get_channel_id()),
-                this.login_on_rsp({ "ResultCode": 0, "msg": "\u83b7\u53d6\u5230\u7528\u6237\u6570\u636e", "data": { "uid": "8660", "open_id": "[REDACTED_LEGACY_OPEN_ID]", "nickname": "", "coins": 2052, "data_last_update_time": 1684998654, "if_block": 0, "if_bind": 0, "bind_username": "", "bind_uid": 0, "bind_channel": 0, "token": "[REDACTED_LEGACY_TOKEN]" } })
-                // m.Utils.server_http_request(
-                //     this.login_on_rsp,
-                //     this,
-                //     p.gm.channel.getServerUrl() + "user/login?code=" + t + "&channel_id=" + o
-                // )
-            ),
+            (o = this.get_channel_id()),
+            m.Utils.server_http_request(
+                this.login_on_rsp,
+                this,
+                p.gm.channel.getServerUrl() + "user/login?code=" + t + "&channel_id=" + o
+            )),
             e && e();
     }),
     (I.prototype.report_logined = function(t, e) {
@@ -843,8 +864,7 @@ Object.defineProperty(I, "instance", {
             cc.log("MainVO.designResolution.x:,MainVO.designResolution.y:%s.", JSON.stringify(n));
     }),
     (I.prototype.init = function(e) {
-        this.report_login("test119", e)
-        return
+        if (!v.default.enable_cloud_save) return void this.report_login("local", e);
         var o = this,
             t = this.get_channel_name();
         console.log("Channel:" + t),
