@@ -53,6 +53,7 @@ var s,
         }),
         (y.prototype.showModule = function (t, e) {
             var o = this;
+            if (!t) return void cc.error("MyUIMgr.showModule: missing module config");
             if (
                 !m.default.getInstance().isBuildingMode() ||
                 [
