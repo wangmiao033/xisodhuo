@@ -1,0 +1,17 @@
+var o = exports;
+Object.defineProperty(o, "__esModule", {value: !0}), (o.ChannelTypeEnum = void 0);
+o.ChannelTypeEnum = {
+    CHANNEL_TYPE_DEFAULT: 0,
+    CHANNEL_TYPE_GOOGLE: 1,
+    CHANNEL_TYPE_HW_GAME: 2,
+    CHANNEL_TYPE_IPAD: 3,
+    CHANNEL_TYPE_IPHONE: 4,
+    CHANNEL_TYPE_JULIANG: 5,
+    CHANNEL_TYPE_OHAYOO: 6,
+    CHANNEL_TYPE_OPPO_GAME: 7,
+    CHANNEL_TYPE_QQ_GAME: 8,
+    CHANNEL_TYPE_TAPTAP: 9,
+    CHANNEL_TYPE_TT_GAME: 10,
+    CHANNEL_TYPE_VIVO_GAME: 11,
+    CHANNEL_TYPE_WECHAT: 12
+};
