@@ -10,6 +10,7 @@ Object.defineProperty(o, "__esModule", {value: !0}),
     (i.ServerMhtRequestUrl = "https://yjth.qszhg.6hwan.com/"),
     (i.AppName = "fairy_operation"),
     (i.allow_clear_local_data = !1),
+    (i.enable_cloud_save = !1),
     (i.loadMapObjectID = [
         e.SpecialObjectID.mainHouse,
         e.SpecialObjectID.bedroom,
